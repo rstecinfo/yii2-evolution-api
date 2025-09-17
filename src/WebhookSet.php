@@ -2,7 +2,7 @@
 
 namespace rstecinfo\yii\EvolutionApi;
 
-use rstecinfo\yii\EvolutionApi;
+use rstecinfo\yii\EvolutionApi\EvolutionApi;
 
 class WebhookSet
 {
