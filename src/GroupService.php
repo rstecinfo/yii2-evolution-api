@@ -1,6 +1,6 @@
 <?php
 
-namespace rstecinfo\yii;
+namespace rstecinfo\yii\EvolutionApi;
 
 use rstecinfo\yii\EvolutionApi;
 
