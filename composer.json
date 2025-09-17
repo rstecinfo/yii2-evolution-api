@@ -29,6 +29,5 @@
     ],
     "require": {
         "luannsr12/apiwpp": ">=2.0.7",
-        "guzzlehttp/guzzle": "^7.10"
     }
 }
