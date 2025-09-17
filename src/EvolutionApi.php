@@ -45,10 +45,7 @@ class EvolutionApi extends Widget
         
         // Instancia o cliente Guzzle com a URL base e os headers padrões (API Key)
         $this->client = new Client([
-            'base_uri' => $this->baseUrl,
-            'headers' => [
-                'apikey' => $this->apiKey,  // Adiciona o cabeçalho da chave de API para todas as requisições
-            ]
+            'baseUrl' => $this->baseUrl,
         ]);
     }
 
@@ -71,9 +68,10 @@ class EvolutionApi extends Widget
     {
         try {
             // Faz uma requisição GET passando os parâmetros na URL (query string)
-            $response = $this->client->get($endpoint, [
-                'query' => $params,
-            ]);
+            $response = $this->client->get($endpoint,
+                    ['query' => $params],
+                    ['apikey' => $this->apiKey]
+                );
 
             // Retorna o corpo da resposta decodificado como array
             $ret = json_decode($response->getData(), true);
@@ -98,9 +96,10 @@ class EvolutionApi extends Widget
     {
         try {
             // Faz uma requisição POST enviando os dados como JSON no corpo
-            $response = $this->client->post($endpoint, [
-                'json' => $data,  // Envia os dados como JSON
-            ]);
+            $response = $this->client->post($endpoint, 
+                    ['json' => $data],
+                    ['apikey' => $this->apiKey]
+                );
 
             // Retorna o corpo da resposta decodificado como array
             return json_decode($response->getData(), true);
@@ -124,9 +123,10 @@ class EvolutionApi extends Widget
     {
         try {
             // Faz uma requisição DELETE enviando os dados como JSON no corpo, se necessário
-            $response = $this->client->delete($endpoint, [
-                'json' => $data,  // Envia os dados como JSON, caso seja necessário
-            ]);
+            $response = $this->client->delete($endpoint, 
+                    ['json' => $data],
+                    ['apikey' => $this->apiKey]
+                );
 
             // Retorna o corpo da resposta decodificado como array
             return json_decode($response->getData(), true);
@@ -150,7 +150,9 @@ class EvolutionApi extends Widget
     {
         try {
             // Faz uma requisição GET 
-            $response = $this->client->get($endpoint);
+            $response = $this->client->get($endpoint,[],
+                    ['apikey' => $this->apiKey]
+                );
 
             // Retorna o corpo da resposta decodificado como array
             $ret = json_decode($response->getData(), true);
