@@ -28,7 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "rstecinfo\\yii\\EvolutionApi\\": "src/"
+            "rstecinfo\\yii\\EvolutionApi\\": "src"
         }
     }
 }
