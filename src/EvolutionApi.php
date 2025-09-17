@@ -12,7 +12,7 @@ use yii\base\Widget;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
-class Evolutionapi extends Widget
+class EvolutionApi extends Widget
 {
     /**
      * @var string $baseUrl URL base da API Evolution

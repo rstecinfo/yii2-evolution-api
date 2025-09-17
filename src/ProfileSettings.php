@@ -2,7 +2,7 @@
 
 namespace rstecinfo\yii;
 
-use rstecinfo\yii\Evolutionapi;
+use rstecinfo\yii\EvolutionApi;
 
 class ProfileSettings
 {
