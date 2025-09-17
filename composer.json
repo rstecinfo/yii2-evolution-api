@@ -28,6 +28,6 @@
         }
     ],
     "require": {
-        "luannsr12/apiwpp": ">=2.0.7",
+        "luannsr12/apiwpp": ">=2.0.7"
     }
 }
