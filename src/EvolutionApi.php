@@ -6,7 +6,7 @@
  * @version 0.0.1
  */
 
-namespace rstecinfo\yii;
+use rstecinfo\yii\EvolutionApi;
 
 use yii\base\Widget;
 use GuzzleHttp\Client;
