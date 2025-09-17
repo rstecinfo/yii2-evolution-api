@@ -9,8 +9,7 @@
 namespace rstecinfo\yii\EvolutionApi;
 
 use yii\base\Widget;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use yii\httpclient\Client;
 
 class EvolutionApi extends Widget
 {
@@ -66,20 +65,20 @@ class EvolutionApi extends Widget
      * @param array $params Parâmetros de consulta (query) a serem enviados na URL
      *
      * @return array A resposta da API decodificada para um array PHP
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function get(string $endpoint, array $params = []): array
     {
         try {
             // Faz uma requisição GET passando os parâmetros na URL (query string)
-            $response = $this->client->request('GET', $endpoint, [
+            $response = $this->client->get($endpoint, [
                 'query' => $params,
             ]);
 
             // Retorna o corpo da resposta decodificado como array
-            $ret = json_decode($response->getBody()->getContents(), true);
+            $ret = json_decode($response->getData(), true);
             return $ret ?? [];
-        } catch (GuzzleException $e) {
+        } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
             //throw new \Exception("Erro ao fazer requisição GET: " . $e->getMessage());
             return ['error' => $e->getMessage()];
@@ -93,19 +92,19 @@ class EvolutionApi extends Widget
      * @param array $data Dados a serem enviados como JSON no corpo da requisição
      *
      * @return array A resposta da API decodificada para um array PHP
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function post(string $endpoint, array $data = []): array
     {
         try {
             // Faz uma requisição POST enviando os dados como JSON no corpo
-            $response = $this->client->request('POST', $endpoint, [
+            $response = $this->client->post($endpoint, [
                 'json' => $data,  // Envia os dados como JSON
             ]);
 
             // Retorna o corpo da resposta decodificado como array
-            return json_decode($response->getBody()->getContents(), true);
-        } catch (GuzzleException $e) {
+            return json_decode($response->getData(), true);
+        } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
             //throw new \Exception("Erro ao fazer requisição POST: " . $e->getMessage());
             return ['error' => $e->getMessage()];
@@ -119,19 +118,19 @@ class EvolutionApi extends Widget
      * @param array $data (Opcional) Dados a serem enviados como JSON no corpo da requisição DELETE
      *
      * @return array A resposta da API decodificada para um array PHP
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function delete(string $endpoint, array $data = []): array
     {
         try {
             // Faz uma requisição DELETE enviando os dados como JSON no corpo, se necessário
-            $response = $this->client->request('DELETE', $endpoint, [
+            $response = $this->client->delete($endpoint, [
                 'json' => $data,  // Envia os dados como JSON, caso seja necessário
             ]);
 
             // Retorna o corpo da resposta decodificado como array
-            return json_decode($response->getBody()->getContents(), true);
-        } catch (GuzzleException $e) {
+            return json_decode($response->getData(), true);
+        } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
             //throw new \Exception("Erro ao fazer requisição DELETE: " . $e->getMessage());
             return ['error' => $e->getMessage()];
@@ -145,27 +144,27 @@ class EvolutionApi extends Widget
      * @param array $params Parâmetros de consulta (query) a serem enviados na URL
      *
      * @return array A resposta da API decodificada para um array PHP
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function status(string $endpoint): array
     {
         try {
             // Faz uma requisição GET 
-            $response = $this->client->request('GET', $endpoint);
+            $response = $this->client->get($endpoint);
 
             // Retorna o corpo da resposta decodificado como array
-            $ret = json_decode($response->getBody()->getContents(), true);
+            $ret = json_decode($response->getData(), true);
             if ($ret == null) {
                 return [null];
             }
             return is_array($ret) ? $ret : [$ret];
             
-        } catch (GuzzleException $e) {
+        } catch (Exception $e) {
             $response = $e?->getResponse();
             if ($response == null) {
                 return [null];
             }
-            return json_decode($response?->getBody()?->getContents(),true);
+            return json_decode($response?->getData(),true);
         }
     }
     
