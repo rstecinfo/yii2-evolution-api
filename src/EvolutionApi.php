@@ -38,11 +38,11 @@ class EvolutionApi extends Widget
      * @param string $baseUrl URL base da API Evolution
      * @param string $apiKey Chave de API fornecida pela Evolution
      */
-    public function __construct(string $baseUrl = null, string $apiKey = null)
+    public function __construct(string $baseUrl, string $apiKey)
     {
         // Se não forem passados valores, utiliza as configurações
-        $this->baseUrl = $baseUrl ?? config('evolution.api_url');
-        $this->apiKey = $apiKey ?? config('evolution.api_key');
+        $this->baseUrl = $baseUrl;
+        $this->apiKey = $apiKey;
         
         // Instancia o cliente Guzzle com a URL base e os headers padrões (API Key)
         $this->client = new Client([
