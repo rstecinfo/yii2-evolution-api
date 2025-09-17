@@ -16,7 +16,7 @@ class InstanceService
      *
      * Inicializa o serviço com uma instância de evolutionapi.
      */
-    public function __construct(evolutionapi $api)
+    public function __construct(Evolutionapi $api)
     {
         $this->api = $api;
     }

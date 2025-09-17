@@ -24,7 +24,7 @@ class GroupService
      * @param evolutionapi $api
      * @param string $instance
      */
-    public function __construct(evolutionapi $api, string $instance)
+    public function __construct(Evolutionapi $api, string $instance)
     {
         $this->api = $api;
         $this->instance = $instance;
