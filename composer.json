@@ -11,12 +11,7 @@
     },
     "keywords": [
         "yii2",
-        "extension",
-        "widget",
-        "context",
-        "menu",
-        "mouse",
-        "click"
+        "curl"
     ],
     "homepage": "https://github.com/rstecinfo/yii2-evolution-api",
     "type": "yii2-extension",

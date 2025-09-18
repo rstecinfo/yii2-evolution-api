@@ -9,7 +9,7 @@
 namespace rstecinfo\yii\EvolutionApi;
 
 use yii\base\Widget;
-use yii\httpclient\Client;
+use rstecinfo\yii\EvolutionApi\HttpCurlRequest as Client;
 
 class EvolutionApi extends Widget {
 
@@ -28,6 +28,8 @@ class EvolutionApi extends Widget {
      */
     protected Client $client;
 
+    protected array $headers;
+    
     /**
      * evolutionapi constructor.
      *
@@ -42,15 +44,12 @@ class EvolutionApi extends Widget {
         $this->baseUrl = $baseUrl;
         $this->apiKey = $apiKey;
 
-        // Instancia o cliente Guzzle com a URL base e os headers padrões (API Key)
-        $this->client = new Client([
-            'baseUrl' => $this->baseUrl,
-        ]);
-    }
-
-    // Novo método para definir o cliente Guzzle (apenas para fins de teste)
-    public function setClient(Client $client): void {
-        $this->client = $client;
+        // Instancia o cliente
+        $this->client = new Client();
+        $this->headers = [
+            "Content-Type" => "application/json",
+            "apikey" => $this->apiKey,
+        ];
     }
 
     /**
@@ -65,10 +64,7 @@ class EvolutionApi extends Widget {
     public function get(string $endpoint, array $params = []): array {
         try {
             // Faz uma requisição GET passando os parâmetros na URL (query string)
-            $response = $this->client->get($endpoint,
-                    ['query' => $params],
-                    ['apikey' => $this->apiKey]
-            );
+            $response = $this->client->get($this->baseUrl . $endpoint, $params, $this->headers);
 
             // Retorna o corpo da resposta decodificado como array
             $ret = $response->getData();
@@ -92,10 +88,7 @@ class EvolutionApi extends Widget {
     public function post(string $endpoint, array $data = []): array {
         try {
             // Faz uma requisição POST enviando os dados como JSON no corpo
-            $response = $this->client->post($endpoint,
-                    ['json' => $data],
-                    ['apikey' => $this->apiKey]
-            );
+            $response = $this->client->post($this->baseUrl . $endpoint, $params, $this->headers);
             $ret = $response->getData();
             return is_array($ret) ? $ret : [$ret];
         } catch (Exception $e) {
@@ -117,10 +110,7 @@ class EvolutionApi extends Widget {
     public function delete(string $endpoint, array $data = []): array {
         try {
             // Faz uma requisição DELETE enviando os dados como JSON no corpo, se necessário
-            $response = $this->client->delete($endpoint,
-                    ['json' => $data],
-                    ['apikey' => $this->apiKey]
-            );
+            $response = $this->client->delete($this->baseUrl . $endpoint, $params, $this->headers);
             // Retorna o corpo da resposta decodificado como array
             $ret = $response->getData();
             return is_array($ret) ? $ret : [$ret];
@@ -143,9 +133,7 @@ class EvolutionApi extends Widget {
     public function status(string $endpoint): array {
         try {
             // Faz uma requisição GET 
-            $response = $this->client->get($endpoint, [],
-                    ['apikey' => $this->apiKey]
-            );
+            $response = $this->client->get($this->baseUrl . $endpoint, null, $this->headers);
             // Retorna o corpo da resposta decodificado como array
             $ret = $response->getData();
             return is_array($ret) ? $ret : [$ret];
