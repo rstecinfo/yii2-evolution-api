@@ -67,7 +67,7 @@ class EvolutionApi extends Widget {
             $response = $this->client->get($this->baseUrl . $endpoint, $params, $this->headers);
 
             // Retorna o corpo da resposta decodificado como array
-            $ret = $response->getData();
+            $ret = json_decode($response['body']);
             return is_array($ret) ? $ret : [$ret];
         } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
@@ -89,7 +89,7 @@ class EvolutionApi extends Widget {
         try {
             // Faz uma requisição POST enviando os dados como JSON no corpo
             $response = $this->client->post($this->baseUrl . $endpoint, $params, $this->headers);
-            $ret = $response->getData();
+            $ret = json_decode($response['body']);
             return is_array($ret) ? $ret : [$ret];
         } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
@@ -112,7 +112,7 @@ class EvolutionApi extends Widget {
             // Faz uma requisição DELETE enviando os dados como JSON no corpo, se necessário
             $response = $this->client->delete($this->baseUrl . $endpoint, $params, $this->headers);
             // Retorna o corpo da resposta decodificado como array
-            $ret = $response->getData();
+            $ret = json_decode($response['body']);
             return is_array($ret) ? $ret : [$ret];
         } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
@@ -135,7 +135,7 @@ class EvolutionApi extends Widget {
             // Faz uma requisição GET 
             $response = $this->client->get($this->baseUrl . $endpoint, null, $this->headers);
             // Retorna o corpo da resposta decodificado como array
-            $ret = $response->getData();
+            $ret = json_decode($response['body']);
             return is_array($ret) ? $ret : [$ret];
         } catch (Exception $e) {
             $response = $e?->getResponse();
