@@ -88,7 +88,6 @@ class HttpCurlRequest
         foreach ($curlOptions as $option => $value) {
             curl_setopt($ch, $option, $value);
         }
-        
         // Executa a requisição
         $response = curl_exec($ch);
         
