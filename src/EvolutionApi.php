@@ -11,8 +11,8 @@ namespace rstecinfo\yii\EvolutionApi;
 use yii\base\Widget;
 use yii\httpclient\Client;
 
-class EvolutionApi extends Widget
-{
+class EvolutionApi extends Widget {
+
     /**
      * @var string $baseUrl URL base da API Evolution
      */
@@ -37,12 +37,11 @@ class EvolutionApi extends Widget
      * @param string $baseUrl URL base da API Evolution
      * @param string $apiKey Chave de API fornecida pela Evolution
      */
-    public function __construct(string $baseUrl, string $apiKey)
-    {
+    public function __construct(string $baseUrl, string $apiKey) {
         // Se não forem passados valores, utiliza as configurações
         $this->baseUrl = $baseUrl;
         $this->apiKey = $apiKey;
-        
+
         // Instancia o cliente Guzzle com a URL base e os headers padrões (API Key)
         $this->client = new Client([
             'baseUrl' => $this->baseUrl,
@@ -50,8 +49,7 @@ class EvolutionApi extends Widget
     }
 
     // Novo método para definir o cliente Guzzle (apenas para fins de teste)
-    public function setClient(Client $client): void
-    {
+    public function setClient(Client $client): void {
         $this->client = $client;
     }
 
@@ -64,18 +62,17 @@ class EvolutionApi extends Widget
      * @return array A resposta da API decodificada para um array PHP
      * @throws Exception
      */
-    public function get(string $endpoint, array $params = []): array
-    {
+    public function get(string $endpoint, array $params = []): array {
         try {
             // Faz uma requisição GET passando os parâmetros na URL (query string)
             $response = $this->client->get($endpoint,
                     ['query' => $params],
                     ['apikey' => $this->apiKey]
-                );
+            );
 
             // Retorna o corpo da resposta decodificado como array
-            $ret = json_decode($response->getData(), true);
-            return $ret ?? [];
+            $ret = $response->getData();
+            return is_array($ret) ? $ret : [$ret];
         } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
             //throw new \Exception("Erro ao fazer requisição GET: " . $e->getMessage());
@@ -92,17 +89,15 @@ class EvolutionApi extends Widget
      * @return array A resposta da API decodificada para um array PHP
      * @throws Exception
      */
-    public function post(string $endpoint, array $data = []): array
-    {
+    public function post(string $endpoint, array $data = []): array {
         try {
             // Faz uma requisição POST enviando os dados como JSON no corpo
-            $response = $this->client->post($endpoint, 
+            $response = $this->client->post($endpoint,
                     ['json' => $data],
                     ['apikey' => $this->apiKey]
-                );
-
-            // Retorna o corpo da resposta decodificado como array
-            return json_decode($response->getData(), true);
+            );
+            $ret = $response->getData();
+            return is_array($ret) ? $ret : [$ret];
         } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
             //throw new \Exception("Erro ao fazer requisição POST: " . $e->getMessage());
@@ -119,24 +114,23 @@ class EvolutionApi extends Widget
      * @return array A resposta da API decodificada para um array PHP
      * @throws Exception
      */
-    public function delete(string $endpoint, array $data = []): array
-    {
+    public function delete(string $endpoint, array $data = []): array {
         try {
             // Faz uma requisição DELETE enviando os dados como JSON no corpo, se necessário
-            $response = $this->client->delete($endpoint, 
+            $response = $this->client->delete($endpoint,
                     ['json' => $data],
                     ['apikey' => $this->apiKey]
-                );
-
+            );
             // Retorna o corpo da resposta decodificado como array
-            return json_decode($response->getData(), true);
+            $ret = $response->getData();
+            return is_array($ret) ? $ret : [$ret];
         } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
             //throw new \Exception("Erro ao fazer requisição DELETE: " . $e->getMessage());
             return ['error' => $e->getMessage()];
         }
     }
-    
+
     /**
      * Faz uma requisição GET para a API Evolution.
      *
@@ -146,28 +140,21 @@ class EvolutionApi extends Widget
      * @return array A resposta da API decodificada para um array PHP
      * @throws Exception
      */
-    public function status(string $endpoint): array
-    {
+    public function status(string $endpoint): array {
         try {
             // Faz uma requisição GET 
-            $response = $this->client->get($endpoint,[],
+            $response = $this->client->get($endpoint, [],
                     ['apikey' => $this->apiKey]
-                );
-
+            );
             // Retorna o corpo da resposta decodificado como array
-            $ret = json_decode($response->getData(), true);
-            if ($ret == null) {
-                return [null];
-            }
+            $ret = $response->getData();
             return is_array($ret) ? $ret : [$ret];
-            
         } catch (Exception $e) {
             $response = $e?->getResponse();
             if ($response == null) {
                 return [null];
             }
-            return json_decode($response?->getData(),true);
+            return json_decode($response?->getData(), true);
         }
     }
-    
 }
