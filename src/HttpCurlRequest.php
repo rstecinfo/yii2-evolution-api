@@ -27,26 +27,25 @@ class HttpCurlRequest
     /**
      * @var int Número máximo de redirecionamentos
      */
-    public $maxRedirects = 5;
+    public $maxRedirects = 10;
     
     /**
      * @var array Headers padrão para todas as requisições
      */
     public $defaultHeaders = [
         'Content-Type' => 'application/json',
-        'Accept' => 'application/json',
+        //'Accept' => 'application/json',
     ];
     
     /**
      * @var array Opções padrão do cURL
      */
     private $defaultCurlOptions = [
-        CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HEADER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_MAXREDIRS => 5,
-        CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 10,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
     ];
     
     /**
@@ -65,29 +64,33 @@ class HttpCurlRequest
         if (!function_exists('curl_init')) {
             throw new \Exception('cURL não está disponível no servidor');
         }
-        
-        $ch = curl_init();
-        
+        $options = $this->defaultCurlOptions;        
+                
         // Configura método e dados
-        $this->setMethod($ch, $method, $data);
+        $options = $this->setMethod($options, $method, $data);
         
         // Configura URL
         if ($method === 'GET' && !empty($data)) {
             $url = $this->buildUrlWithQuery($url, $data);
         }
-        curl_setopt($ch, CURLOPT_URL, $url);
-        
+        $options[CURLOPT_URL]=$url;
+        //curl_setopt($ch, CURLOPT_URL, $url);
         // Configura headers
         $allHeaders = array_merge($this->defaultHeaders, $headers);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->formatHeaders($allHeaders));
+        //curl_setopt($ch, CURLOPT_HTTPHEADER, $this->formatHeaders($allHeaders));
+        $options[CURLOPT_HTTPHEADER]=$this->formatHeaders($allHeaders);
         
         // Configura opções padrão
-        $this->setDefaultOptions($ch);
+        $options = $this->setDefaultOptions($options);
         
         // Configura opções personalizadas
         foreach ($curlOptions as $option => $value) {
-            curl_setopt($ch, $option, $value);
+            //curl_setopt($ch, $option, $value);
+            $options[$option]=$value;
         }
+        
+        $ch = curl_init();
+        curl_setopt_array($ch, $options);
         // Executa a requisição
         $response = curl_exec($ch);
         
@@ -111,7 +114,7 @@ class HttpCurlRequest
         return [
             'status' => $httpCode,
             'headers' => $this->parseHeaders($responseHeaders),
-            'body' => $responseBody,
+            'body' => json_decode($responseBody),
             'success' => $httpCode >= 200 && $httpCode < 300
         ];
     }
@@ -124,7 +127,7 @@ class HttpCurlRequest
      * @param array $headers Headers adicionais
      * @return array Resposta da requisição
      */
-    public function get($url, $queryParams = [], $headers = [])
+    public function get($url, $queryParams = [], $headers = []) 
     {
         return $this->request($url, 'GET', $queryParams, $headers);
     }
@@ -188,21 +191,22 @@ class HttpCurlRequest
      * @param string $method Método HTTP
      * @param array $data Dados
      */
-    private function setMethod(&$ch, $method, $data)
+    private function setMethod($options, $method, $data)
     {
         $method = strtoupper($method);
         
         switch ($method) {
             case 'POST':
-                curl_setopt($ch, CURLOPT_POST, true);
+                $options[CURLOPT_CUSTOMREQUEST]=$method;
+                //$options[CURLOPT_POST]=true;
                 break;
             case 'PUT':
             case 'DELETE':
             case 'PATCH':
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+                $options[CURLOPT_CUSTOMREQUEST]=$method;
                 break;
             default:
-                curl_setopt($ch, CURLOPT_HTTPGET, true);
+                $options[CURLOPT_HTTPGET]=true;
                 break;
         }
         
@@ -210,8 +214,9 @@ class HttpCurlRequest
         if (in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE']) && !empty($data)) {
             $contentType = $this->detectContentType();
             $postData = $this->formatData($data, $contentType);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+            $options[CURLOPT_POSTFIELDS]=$postData;
         }
+        return $options;
     }
     
     /**
@@ -296,10 +301,8 @@ class HttpCurlRequest
      * 
      * @param resource $ch Handle do cURL
      */
-    private function setDefaultOptions(&$ch)
+    private function setDefaultOptions($options)
     {
-        $options = $this->defaultCurlOptions;
-        
         // Configurações da instância
         $options[CURLOPT_FOLLOWLOCATION] = $this->followRedirects;
         $options[CURLOPT_MAXREDIRS] = $this->maxRedirects;
@@ -310,10 +313,7 @@ class HttpCurlRequest
             $options[CURLOPT_SSL_VERIFYPEER] = false;
             $options[CURLOPT_SSL_VERIFYHOST] = false;
         }
-        
-        foreach ($options as $option => $value) {
-            curl_setopt($ch, $option, $value);
-        }
+        return $options;
     }
     
     /**

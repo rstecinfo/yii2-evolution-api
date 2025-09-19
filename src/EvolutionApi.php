@@ -64,11 +64,7 @@ class EvolutionApi extends Widget {
     public function get(string $endpoint, array $params = []): array {
         try {
             // Faz uma requisição GET passando os parâmetros na URL (query string)
-            $response = $this->client->get($this->baseUrl . $endpoint, $params, $this->headers);
-
-            // Retorna o corpo da resposta decodificado como array
-            $ret = json_decode($response['body']);
-            return is_array($ret) ? $ret : [$ret];
+            return $this->client->get($this->baseUrl . $endpoint, $params, $this->headers);
         } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
             //throw new \Exception("Erro ao fazer requisição GET: " . $e->getMessage());
@@ -85,12 +81,10 @@ class EvolutionApi extends Widget {
      * @return array A resposta da API decodificada para um array PHP
      * @throws Exception
      */
-    public function post(string $endpoint, array $data = []): array {
+    public function post(string $endpoint, array $params = []): array {
         try {
             // Faz uma requisição POST enviando os dados como JSON no corpo
-            $response = $this->client->post($this->baseUrl . $endpoint, $params, $this->headers);
-            $ret = json_decode($response['body']);
-            return is_array($ret) ? $ret : [$ret];
+            return $this->client->post($this->baseUrl . $endpoint, $params, $this->headers);
         } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
             //throw new \Exception("Erro ao fazer requisição POST: " . $e->getMessage());
@@ -102,18 +96,14 @@ class EvolutionApi extends Widget {
      * Faz uma requisição DELETE para a API Evolution.
      *
      * @param string $endpoint O endpoint relativo da API (ex: '/instance/delete')
-     * @param array $data (Opcional) Dados a serem enviados como JSON no corpo da requisição DELETE
      *
      * @return array A resposta da API decodificada para um array PHP
      * @throws Exception
      */
-    public function delete(string $endpoint, array $data = []): array {
+    public function delete(string $endpoint): array {
         try {
             // Faz uma requisição DELETE enviando os dados como JSON no corpo, se necessário
-            $response = $this->client->delete($this->baseUrl . $endpoint, $params, $this->headers);
-            // Retorna o corpo da resposta decodificado como array
-            $ret = json_decode($response['body']);
-            return is_array($ret) ? $ret : [$ret];
+            return $this->client->delete($this->baseUrl . $endpoint, null, $this->headers);
         } catch (Exception $e) {
             // Lidar com exceções de forma apropriada
             //throw new \Exception("Erro ao fazer requisição DELETE: " . $e->getMessage());
@@ -133,10 +123,7 @@ class EvolutionApi extends Widget {
     public function status(string $endpoint): array {
         try {
             // Faz uma requisição GET 
-            $response = $this->client->get($this->baseUrl . $endpoint, null, $this->headers);
-            // Retorna o corpo da resposta decodificado como array
-            $ret = json_decode($response['body']);
-            return is_array($ret) ? $ret : [$ret];
+            return $this->client->get($this->baseUrl . $endpoint, null, $this->headers);
         } catch (Exception $e) {
             $response = $e?->getResponse();
             if ($response == null) {

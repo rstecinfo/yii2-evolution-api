@@ -30,7 +30,7 @@ class InstanceService
      *
      * @return array A resposta da API
      */
-    public function createInstance(string $instanceName, bool $qrcode = true, bool $integration = false): array
+    public function createInstance(string $instanceName, bool $qrcode = true, string $integration = ''): array
     {
         $data = [
             'instanceName' => $instanceName,
